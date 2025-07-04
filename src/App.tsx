@@ -1,22 +1,40 @@
-import { useState } from 'react'
-import Person from './person';
-import Car from './components/CarComponent'
-import './App.css'
+import { useState, useEffect } from "react";
+import "./App.css";
 
-function App() {
+const App = () => {
   const [count, setCount] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval>;
+    if (isRunning) {
+      timer = setInterval(() => {
+        setCount((prevCount) => prevCount + 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isRunning]);
+
+  const handleStart = () => setIsRunning(true);
+  const handleStop = () => setIsRunning(false);
+  const handleIncrement = () => setCount((prev) => prev + 1);
+  const handleDecrement = () => setCount((prev) => prev - 1);
 
   return (
-    <>
-      <div>
-        <p>Count: {count}</p>
-        <h1>Hello from state vs props</h1>
-        <Car name="maruti" color="red" />
-        <Person />
-        <button onClick={() => setCount(count + 1)}>Increment</button>
-      </div>
-    </>
-  )
-}
+    <div className="container">
+      <h1>Counter App</h1>
+      <h2>{count}</h2>
 
-export default App
+      <button onClick={handleStart} disabled={isRunning}>
+        Start
+      </button>
+      <button onClick={handleStop} disabled={!isRunning}>
+        Stop
+      </button>
+      <button onClick={handleIncrement}>Increment</button>
+      <button onClick={handleDecrement}>Decrement</button>
+    </div>
+  );
+};
+
+export default App;
